@@ -116,7 +116,7 @@ import { assert } from "console";
     }, { keccak: true });
     console.log("Recursive proof verified: ", verified);
 
-    const arrayBuffer = await readFile('vk');
+    const arrayBuffer = await readFile('/home/piotrstec/dev/tmp-projects/recursion-mt/js/vk');
 
     console.log("Recursive proof: ", recursiveProof.length);
     console.log("Recursive public inputs: ", recursivePublicInputs.length);
