@@ -1,14 +1,22 @@
-import { Barretenberg, RawBuffer, UltraHonkBackend } from "@aztec/bb.js";
+import { Barretenberg, deflattenFields, RawBuffer, reconstructHonkProof, UltraHonkBackend } from "@aztec/bb.js";
 import innerCircuit from "../circuits/transfer/target/transfer.json" assert { type: "json" };
 import recursiveCircuit from "../circuits/recursive/target/recursive.json" assert { type: "json" };
+import { readFile } from 'fs/promises';
+
 import { CompiledCircuit, Noir } from "@noir-lang/noir_js";
+import * as garaga from 'garaga';
+import path from 'path';
+import { assert } from "console";
+
+
 
 (async () => {
   try {
+    await garaga.init();
     const innerCircuitNoir = new Noir(innerCircuit as CompiledCircuit);
     const innerBackend = new UltraHonkBackend(
       innerCircuit.bytecode,
-      { threads: 1 },
+      { threads: 2 },
       { recursive: true }
     );
 
@@ -69,10 +77,9 @@ import { CompiledCircuit, Noir } from "@noir-lang/noir_js";
       gas_fee: "0xe0e52570ab1d8000",
       paymaster_fee: "0x6fbb9bbe2fa0000",
     };
-
     const { witness } = await innerCircuitNoir.execute(inputs);
     const { proof: innerProofFields, publicInputs: innerPublicInputs } =
-      await innerBackend.generateProofForRecursiveAggregation(witness);
+      await innerBackend.generateProof(witness, { keccak: true });
 
     // Get verification key for inner circuit as fields
     const innerCircuitVerificationKey = await innerBackend.getVerificationKey();
@@ -86,26 +93,45 @@ import { CompiledCircuit, Noir } from "@noir-lang/noir_js";
     // Generate proof of the recursive circuit
     const recursiveCircuitNoir = new Noir(recursiveCircuit as CompiledCircuit);
     const recursiveBackend = new UltraHonkBackend(recursiveCircuit.bytecode, {
-      threads: 1,
-    });
+      threads: 2,
+    }, { recursive: true });
 
     const recursiveInputs = {
-      proof: innerProofFields,
+      proof: deflattenFields(innerProofFields),
       public_inputs: innerPublicInputs,
       verification_key: vkAsFields,
     };
+
     const { witness: recursiveWitness } = await recursiveCircuitNoir.execute(
       recursiveInputs
     );
     const { proof: recursiveProof, publicInputs: recursivePublicInputs } =
-      await recursiveBackend.generateProof(recursiveWitness);
+      await recursiveBackend.generateProof(recursiveWitness, { keccak: true });
+
 
     // Verify recursive proof
     const verified = await recursiveBackend.verifyProof({
       proof: recursiveProof,
       publicInputs: recursivePublicInputs,
-    });
+    }, { keccak: true });
     console.log("Recursive proof verified: ", verified);
+
+    const arrayBuffer = await readFile('vk');
+
+    console.log("Recursive proof: ", recursiveProof.length);
+    console.log("Recursive public inputs: ", recursivePublicInputs.length);
+    const binaryData = new Uint8Array(arrayBuffer);
+
+    console.log("inner circuit verification key: ", binaryData.length);
+
+    const callData = garaga.getHonkCallData(
+      recursiveProof,
+      flattenFieldsAsArray(recursivePublicInputs),
+      binaryData,
+      0 
+    );
+
+    console.log("Call data: ", callData);
 
     process.exit(verified ? 0 : 1);
   } catch (error) {
@@ -113,3 +139,39 @@ import { CompiledCircuit, Noir } from "@noir-lang/noir_js";
     process.exit(1);
   }
 })();
+
+
+export function flattenFieldsAsArray(fields: any) {
+  const flattenedPublicInputs = fields.map(hexToUint8Array);
+  return flattenUint8Arrays(flattenedPublicInputs);
+}
+
+function flattenUint8Arrays(arrays: any) {
+  const totalLength = arrays.reduce((acc: any, val: any) => acc + val.length, 0);
+  const result = new Uint8Array(totalLength);
+
+  let offset = 0;
+  for (const arr of arrays) {
+    result.set(arr, offset);
+    offset += arr.length;
+  }
+
+  return result;
+}
+
+function hexToUint8Array(hex: any) {
+  const sanitisedHex = BigInt(hex).toString(16).padStart(64, '0');
+
+  const len = sanitisedHex.length / 2;
+  const u8 = new Uint8Array(len);
+
+  let i = 0;
+  let j = 0;
+  while (i < len) {
+    u8[i] = parseInt(sanitisedHex.slice(j, j + 2), 16);
+    i += 1;
+    j += 2;
+  }
+
+  return u8;
+}
