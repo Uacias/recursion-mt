@@ -5,11 +5,12 @@ E2E example of generating a recursive proof using Noir and bb.js.
 - Circuits in `circuits/` directory
 - JS code in `js/generate-proof.ts`
 
-
 ### Version used
+
 ```
 Noir 1.0.0-beta.3
-bb 0.82.2
+bb 0.86.0-starknet.1
+garaga 0.18.0
 ```
 
 ### Steps
