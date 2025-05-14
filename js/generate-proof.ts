@@ -5,8 +5,9 @@ import { readFile } from 'fs/promises';
 
 import { CompiledCircuit, Noir } from "@noir-lang/noir_js";
 import * as garaga from 'garaga';
-import path from 'path';
-import { assert } from "console";
+
+import { RpcProvider, type Call } from 'starknet';
+
 
 
 
@@ -124,14 +125,31 @@ import { assert } from "console";
 
     console.log("inner circuit verification key: ", binaryData.length);
 
-    const callData = garaga.getHonkCallData(
+    const honkCalldata = garaga.getHonkCallData(
       recursiveProof,
       flattenFieldsAsArray(recursivePublicInputs),
       binaryData,
-      0 
+      0
     );
 
-    console.log("Call data: ", callData);
+
+    const honkCalldataHex = [
+      ...honkCalldata.map((element) => `0x${element.toString(16)}`)
+    ];
+
+
+    const provider = new RpcProvider({
+      nodeUrl:
+        'https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/mVezGEryDGu44a6orkirJc-1DABMv6HW'
+    });
+    let starknetCall: Call = {
+      contractAddress: `0x00d01383ee6db2967d9941b23eda27131d5ecdaeeb85645d755f255c218815eb`,
+      entrypoint: 'verify_ultra_keccak_honk_proof',
+      calldata: honkCalldataHex
+    };
+    let callResponse = await provider.callContract(starknetCall);
+
+    console.log("CallResponse: ", callResponse);
 
     process.exit(verified ? 0 : 1);
   } catch (error) {
