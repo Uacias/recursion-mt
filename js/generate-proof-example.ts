@@ -14,7 +14,8 @@ import * as garaga from "garaga";
     const innerCircuitNoir = new Noir(innerCircuit as CompiledCircuit);
     const innerBackend = new UltraHonkBackend(innerCircuit.bytecode, {
       threads: 2,
-    });
+      
+    }, );
 
     console.log("polska gurom");
 
@@ -26,7 +27,7 @@ import * as garaga from "garaga";
     const { witness } = await innerCircuitNoir.execute(inputs);
     console.log("Proof generate");
     const { proof: innerProofFields, publicInputs: innerPublicInputs } =
-      await innerBackend.generateProof(witness);
+      await innerBackend.generateProof(witness, {keccak: true});
     console.log("proof", innerProofFields);
 
     const arrayBuffer = await readFile("../circuits/example/target/vk.bin");

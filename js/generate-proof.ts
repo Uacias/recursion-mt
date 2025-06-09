@@ -134,7 +134,7 @@ import { RpcProvider, type Call } from "starknet";
     const { witness } = await innerCircuitNoir.execute(inputs);
     console.log("Proof generate");
     const { proof: innerProofFields, publicInputs: innerPublicInputs } =
-      await innerBackend.generateProof(witness, { starknet: true });
+      await innerBackend.generateProof(witness, { keccak: true });
     console.log("proof", innerProofFields);
     console.log("after proof");
 
@@ -153,11 +153,11 @@ import { RpcProvider, type Call } from "starknet";
       threads: 2,
     });
 
-    // const recursiveInputs = {
-    //   proof: deflattenFields(innerProofFields),
-    //   public_inputs: innerPublicInputs,
-    //   verification_key: vkAsFields,
-    // };
+    const recursiveInputs = {
+      proof: deflattenFields(innerProofFields),
+      public_inputs: innerPublicInputs,
+      verification_key: vkAsFields,
+    };
 
     // const { witness: recursiveWitness } = await recursiveCircuitNoir.execute(
     //   recursiveInputs
@@ -188,22 +188,23 @@ import { RpcProvider, type Call } from "starknet";
     );
 
     const honkCalldataHex = [
+      // `0x` + honkCalldata.length.toString(16),
       ...honkCalldata.map((element) => `0x${element.toString(16)}`),
     ];
-    console.log("Honk calldata", honkCalldata);
+    console.log("Honk calldata", honkCalldataHex);
 
-    // const provider = new RpcProvider({
-    //   nodeUrl:
-    //     'https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/mVezGEryDGu44a6orkirJc-1DABMv6HW'
-    // });
-    // let starknetCall: Call = {
-    //   contractAddress: `0x00d01383ee6db2967d9941b23eda27131d5ecdaeeb85645d755f255c218815eb`,
-    //   entrypoint: 'verify_ultra_keccak_honk_proof',
-    //   calldata: honkCalldataHex
-    // };
-    // let callResponse = await provider.callContract(starknetCall);
+    const provider = new RpcProvider({
+      nodeUrl:
+        "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/mVezGEryDGu44a6orkirJc-1DABMv6HW",
+    });
+    let starknetCall: Call = {
+      contractAddress: `0x0396e24b7a83be59d5a6ae7cef42a87d3793498f70b32dee01a0f813ef59c6f9`,
+      entrypoint: "verify_ultra_keccak_honk_proof",
+      calldata: honkCalldataHex,
+    };
+    let callResponse = await provider.callContract(starknetCall);
 
-    // console.log("CallResponse: ", callResponse);
+    console.log("CallResponse: ", callResponse);
 
     // process.exit(verified ? 0 : 1);
   } catch (error) {

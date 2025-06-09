@@ -1,0 +1,13 @@
+{
+    "alpha-sepolia": {
+        "argentACC": {
+            "address": "0x64fa47c02430e5d69c0c5d340e23397bca308f7b9d85247565fc91f2c2ad2f2",
+            "class_hash": "0x36078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f",
+            "deployed": true,
+            "legacy": false,
+            "private_key": "0x4b10399eb3eee3bddbe485790b2d81ab30be8019b634e44728b96e6ec383d47",
+            "public_key": "0x70d63c94ad6c74e947f51e831c86a3a37ea6cac796a971993b6934782c5e0c8",
+            "type": "argent"
+        }
+    }
+}
