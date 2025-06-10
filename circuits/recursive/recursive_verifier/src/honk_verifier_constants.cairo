@@ -3,7 +3,7 @@ use garaga::utils::noir::HonkVk;
 
 // _vk_hash = keccak256(vk_bytes)
 // vk_hash = hades_permutation(_vk_hash.low, _vk_hash.high, 2)
-pub const VK_HASH: felt252 = 0x417c621e15081f0d1726309cbfc21012b7f820444347bad35d397687733c7f3;
+pub const VK_HASH: felt252 = 0x1594760f702362161a6916406ea58fa77161df7615bcf480767734352bf705a;
 pub const vk: HonkVk = HonkVk {
     circuit_size: 1048576,
     log_circuit_size: 20,
@@ -207,29 +207,29 @@ pub const vk: HonkVk = HonkVk {
     },
     s2: G1Point {
         x: u384 {
-            limb0: 0x743baa3a4de329b4c4db962d,
-            limb1: 0xde11d8cdab4d8430fc21dfb5,
-            limb2: 0x2b51d9cc3468f9ca,
+            limb0: 0xeacec0008a7d28b23d7c3da1,
+            limb1: 0xebd163118c797f8aafec8239,
+            limb2: 0x1fba30edf0e0e34c,
             limb3: 0x0,
         },
         y: u384 {
-            limb0: 0x7c65be3bc32b4a98105c1ccd,
-            limb1: 0xc9d57481cbf820493866b27a,
-            limb2: 0x228f548d59c9e5a,
+            limb0: 0xc8b60c7653040c1164641caf,
+            limb1: 0xdea6b2273edf44935ef6c244,
+            limb2: 0x81fe75ed894aeff,
             limb3: 0x0,
         },
     },
     s3: G1Point {
         x: u384 {
-            limb0: 0xbb9f4ee0b0084cdfde6f3ded,
-            limb1: 0x3cd1f0d804cdb31650a57bba,
-            limb2: 0x22c5976ddc561704,
+            limb0: 0xca9992f6a35a4db5630198dc,
+            limb1: 0x182e505980b194949e069229,
+            limb2: 0x11de32c0bd9883f6,
             limb3: 0x0,
         },
         y: u384 {
-            limb0: 0xd462e13c264905111bc88314,
-            limb1: 0xd2e49eaa754f286a81a2444e,
-            limb2: 0x308781a2d80054e,
+            limb0: 0x45c777deb6df0a9899b97d1a,
+            limb1: 0x83086054e1a05c96c1e63858,
+            limb2: 0xfaf62f1a5f4b0da,
             limb3: 0x0,
         },
     },
@@ -263,15 +263,15 @@ pub const vk: HonkVk = HonkVk {
     },
     id2: G1Point {
         x: u384 {
-            limb0: 0xacfe9fe5c293a617f9cb30c9,
-            limb1: 0xa5cd1b01b15457f166e5bca3,
-            limb2: 0x959261c98d52006,
+            limb0: 0xc6cbec741253c668ae9d00e3,
+            limb1: 0x5ae381859b51eccb8323ddf6,
+            limb2: 0x93b16327718393d,
             limb3: 0x0,
         },
         y: u384 {
-            limb0: 0x90d5ff69cbb5cac0d2ff5839,
-            limb1: 0x76a68e4338cbaa4b2f8c9204,
-            limb2: 0x25915c71f761aa7f,
+            limb0: 0x25113749052845be13a43ff9,
+            limb1: 0xe7d38c0fc9b0503a3e1b289b,
+            limb2: 0x1bb2cc77f7c5d1c4,
             limb3: 0x0,
         },
     },

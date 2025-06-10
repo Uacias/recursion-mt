@@ -113,7 +113,7 @@ import { CompiledCircuit, Noir } from "@noir-lang/noir_js";
 
     const { witness } = await innerCircuitNoir.execute(inputs);
     const { proof: innerProofFields, publicInputs: innerPublicInputs } =
-      await innerBackend.generateProof(witness, );
+      await innerBackend.generateProof(witness);
 
     // Get verification key for inner circuit as fields
     const innerCircuitVerificationKey = await innerBackend.getVerificationKey();
